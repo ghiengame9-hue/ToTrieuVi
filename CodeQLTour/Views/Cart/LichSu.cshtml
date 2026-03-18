@@ -1,0 +1,178 @@
+﻿@model IEnumerable<dynamic>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+    body {
+        background: #eef2f7;
+        font-family: 'Segoe UI',sans-serif;
+        font-size: 20px;
+    }
+
+    /* NAVBAR */
+
+    .navbar {
+        background: linear-gradient(90deg,#0d3b66,#1c5d99);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        padding: 16px 0;
+    }
+
+        .navbar .nav-link {
+            color: white;
+            font-weight: 500;
+        }
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand fw-bold">Tovy</a>
+
+        <div class="navbar-nav me-auto">
+
+            <a href="/Tour/Index" class="nav-link text-white">
+                Trang chủ
+            </a>
+
+            <a asp-controller="Cart"
+                   asp-action="Index"
+                   class="nav-link">
+                Giỏ hàng
+            </a>
+
+        </div>
+
+        <a asp-controller="KhachHang"
+               asp-action="Profile"
+               class="btn btn-light me-2">
+            Trang cá nhân
+        </a>
+
+    </div>
+
+</nav>
+
+<div class="container mt-5">
+
+    <h3 class="mb-4">📜 Lịch sử mua tour</h3>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+
+            <tr>
+                <th>Tên Tour</th>
+                <th>Giá vé</th>
+                <th>Số lượng</th>
+                <th>Ngày khởi hành</th>
+                <th>Thời gian đặt</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+
+                <tr>
+
+                    <td>@item.TenTour</td>
+
+                    <td class="text-danger fw-bold">
+                        @Convert.ToDecimal(item.GiaVe).ToString("N0") đ
+                    </td>
+
+                    <td>@item.SoLuong</td>
+
+                    <td>
+
+                        @if (item.NgayKhoiHanh == null)
+                        {
+                            <span class="text-muted">Chưa chọn</span>
+                        }
+                        else
+                        {
+                            @(((DateTime)item.NgayKhoiHanh).ToString("dd/MM/yyyy"))
+                        }
+
+                    </td>
+
+                    <td>
+
+                        @if (item.NgayDatTour == null)
+                        {
+                            <span class="text-muted">Chưa có</span>
+                        }
+                        else
+                        {
+                            @(((DateTime)item.NgayDatTour).ToString("dd/MM/yyyy HH:mm:ss"))
+                        }
+
+                    </td>
+
+                    <td>
+
+                        @if (item.TrangThai == "Chờ xác nhận")
+                        {
+                            <span class="badge bg-warning text-dark">
+                                Chờ xác nhận
+                            </span>
+                        }
+                        else if (item.TrangThai == "Đã xác nhận")
+                        {
+                            <span class="badge bg-success">
+                                Đã xác nhận
+                            </span>
+                        }
+                        else if (item.TrangThai == "Đã hủy")
+                        {
+                            <span class="badge bg-danger">
+                                Đã hủy
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">
+                                Không xác định
+                            </span>
+                        }
+
+                    </td>
+
+                    <td>
+
+                        @if (item.TrangThai == "Chờ xác nhận")
+                        {
+                            <a href="/Cart/HuyDon/@item.SoPhieuDatTour"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc muốn hủy đơn này không?')">
+
+                                Hủy đơn
+
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                Không thể hủy
+                            </span>
+                        }
+
+                    </td>
+
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

@@ -1,0 +1,276 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    var today = DateTime.Today;
+
+
+    var dates = new List<DateTime>()
+{
+    today.AddDays(3),
+    today.AddDays(7),
+    today.AddDays(14),
+    today.AddDays(21),
+    today.AddDays(30)
+
+};
+}
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+    body {
+        background: #eef2f7;
+        font-family: 'Segoe UI',sans-serif;
+        font-size: 20px;
+    }
+
+    .navbar {
+        background: linear-gradient(90deg,#0d3b66,#1c5d99);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        padding: 16px 0;
+    }
+    
+    .cart-box {
+        background: white;
+        border-radius: 15px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .cart-img {
+        width: 140px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+        table td {
+            vertical-align: middle;
+        }
+
+    .form-select {
+        width: 170px;
+    }
+
+    .qty-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .qty-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        font-weight: bold;
+    }
+
+    .qty-number {
+        font-size: 18px;
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .total-col {
+        white-space: nowrap;
+        font-size: 18px;
+        font-weight: 700;
+        color: #e53935;
+    }
+
+    .total-box {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .total-price {
+        font-size: 34px;
+        font-weight: 700;
+        color: #e53935;
+    }
+
+    .buy-btn {
+        width: 100%;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(90deg,#ffb300,#ff8f00);
+        border: none;
+        transition: .3s;
+    }
+
+        .buy-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold">Tovy</a>
+
+        <div class="navbar-nav me-auto">
+            <a href="/Tour/Index" class="nav-link text-white">Trang chủ</a>
+        </div>
+
+        <a asp-controller="KhachHang"
+           asp-action="Profile"
+           class="btn btn-light me-2">
+            Trang cá nhân
+        </a>
+
+    </div>
+</nav>
+
+<div class="container-fluid mt-5 px-5">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <div class="cart-box">
+
+                <h3 class="mb-4">🛒 Giỏ hàng</h3>
+
+                <table class="table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Tour</th>
+                            <th>Giá</th>
+                            <th>Ngày khởi hành</th>
+                            <th>Số lượng</th>
+                            <th>Tổng</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            DateTime ngay = (DateTime)item.NgayKhoiHanh;
+
+                            <tr>
+
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <img src="/images/@item.HinhAnh"
+                                             class="cart-img">
+
+                                        <div class="fw-bold">
+                                            @item.TenTour
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @Convert.ToDecimal(item.GiaVe).ToString("N0") đ
+                                </td>
+
+                                <td>
+
+                                    <select class="form-select"
+                                            onchange="location.href='/Cart/ChangeDate?id=@item.MaTour&date='+this.value">
+
+                                        @foreach (var d in dates)
+                                        {
+                                            if (ngay.Year != 1 && ngay.Date == d.Date)
+                                            {
+                                                <option value="@d.ToString("yyyy-MM-dd")" selected>
+                                                    @d.ToString("dd/MM/yyyy")
+                                                </option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@d.ToString("yyyy-MM-dd")">
+                                                    @d.ToString("dd/MM/yyyy")
+                                                </option>
+                                            }
+                                        }
+
+                                    </select>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="qty-box">
+
+                                        <a asp-action="Decrease"
+                                           asp-route-id="@item.MaTour"
+                                           class="btn btn-outline-secondary qty-btn">-</a>
+
+                                        <span class="qty-number">
+                                            @item.SoLuong
+                                        </span>
+
+                                        <a asp-action="Increase"
+                                           asp-route-id="@item.MaTour"
+                                           class="btn btn-outline-secondary qty-btn">+</a>
+
+                                    </div>
+
+                                </td>
+
+                                <td class="total-col">
+                                    @Convert.ToDecimal(item.TongTien).ToString("N0") đ
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            @{
+                decimal tong = 0;
+
+                foreach (var item in Model)
+                {
+                    tong += Convert.ToDecimal(item.GiaVe) * Convert.ToInt32(item.SoLuong);
+                }
+            }
+
+            <div class="total-box">
+
+                <h4 class="mb-3">Tổng thanh toán</h4>
+
+                <h2 class="total-price mb-4">
+                    @tong.ToString("N0") đ
+                </h2>
+
+                <a href="/Cart/Checkout" class="btn buy-btn">
+                    🛒 Mua hàng
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

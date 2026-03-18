@@ -1,0 +1,32 @@
+﻿@model IEnumerable<CodeQLTour.Models.Account>
+
+<h2>Quản lý tài khoản</h2>
+
+<a href="/Admin/CreateAccount" class="btn btn-success mb-3">Tạo tài khoản</a>
+
+<table class="table table-bordered">
+
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Phone</th>
+        <th>Vai trò</th>
+        <th></th>
+    </tr>
+
+    @foreach (var a in Model)
+    {
+        <tr>
+            <td>@a.Id</td>
+            <td>@a.Username</td>
+            <td>@a.Phone</td>
+            <td>@a.VaiTro</td>
+
+            <td>
+                <a href="/Admin/DeleteAccount/@a.Id" class="btn btn-danger btn-sm">Xóa</a>
+            </td>
+
+        </tr>
+    }
+
+</table>

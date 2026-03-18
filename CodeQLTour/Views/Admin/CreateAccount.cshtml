@@ -1,0 +1,167 @@
+﻿@model CodeQLTour.Models.Account
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+    body {
+        height: 100vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial;
+    }
+
+    /* CARD */
+
+    .card-auth {
+        width: 420px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    /* TITLE */
+
+    .title {
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    /* PASSWORD BUTTON */
+
+    .eye-btn {
+        border: none;
+        background: none;
+        font-size: 18px;
+    }
+
+    /* BACK BUTTON */
+
+    .back-btn {
+        text-decoration: none;
+    }
+
+</style>
+
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-5">
+
+            <div class="card card-auth p-4">
+
+                <!-- NÚT TRỞ VỀ -->
+
+                <div class="mb-3">
+
+                    <a href="/Admin/KhachHang"
+                           class="btn btn-outline-secondary btn-sm back-btn">
+
+                        ← Trở về danh sách khách hàng
+
+                    </a>
+
+                </div>
+
+
+                <div class="text-center mb-4 title">
+                    Tạo tài khoản khách hàng
+                </div>
+
+
+                <form asp-action="CreateAccount" method="post">
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+
+                    <!-- USERNAME -->
+
+                    <input asp-for="Username"
+                           class="form-control mb-3"
+                           placeholder="Tên tài khoản"
+                           required>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="input-group mb-3">
+
+                            <input asp-for="Password"
+                                   id="password"
+                                   type="password"
+                                   class="form-control"
+                                   placeholder="Mật khẩu"
+                                   minlength="6"
+                                   required>
+
+                                <button type="button"
+                                        class="eye-btn"
+                                        onclick="togglePassword()">
+                                    👁
+                                </button>
+
+                            </div>
+
+
+                            <!-- BUTTON -->
+
+                            <button class="btn btn-primary w-100"
+                                    onclick="return confirm('Bạn có chắc muốn tạo tài khoản này?')">
+
+                                Tạo tài khoản
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <script>
+
+            function togglePassword(){
+
+                var x=document.getElementById("password");
+
+                if(x.type==="password"){
+                    x.type="text";
+                }else{
+                    x.type="password";
+                }
+
+            }
+                        function checkPassword() {
+
+                var pass = document.getElementById("password").value;
+
+                if (pass.length < 6) {
+                    alert("Mật khẩu phải có ít nhất 6 ký tự");
+                    return false;
+                }
+
+                return confirm("Bạn có chắc muốn tạo tài khoản này?");
+            }
+            const images = [
+            "/images/338596.jpg",
+            "/images/1012111.jpg",
+            "/images/238870.jpg",
+            "/images/37864.jpg",
+            "/images/476288.jpg",
+            "/images/521718.jpg"
+            ];
+
+            const random = Math.floor(Math.random() * images.length);
+
+            document.body.style.backgroundImage = "url('" + images[random] + "')";
+
+        </script>

@@ -1,0 +1,209 @@
+﻿@model IEnumerable<dynamic>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+    body {
+        background: #eef2f7;
+        font-family: 'Segoe UI';
+    }
+
+    .navbar {
+        background: linear-gradient(90deg,#0d3b66,#1c5d99);
+    }
+
+    .card-box {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-confirm {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #dc3545;
+        color: white;
+    }
+
+    thead {
+        background: #0d3b66;
+        color: white;
+    }
+
+    tbody tr:hover {
+        background: #f1f5ff;
+    }
+
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+    <div class="container">
+
+        <a class="navbar-brand fw-bold">Tovy Staff</a>
+
+        <div class="ms-auto">
+
+            <span class="text-white me-3">
+                Xin chào: <b>@Context.Session.GetString("User")</b>
+            </span>
+
+            @{
+                var role = Context.Session.GetString("VaiTro");
+            }
+
+            @if (role == "NhanVien")
+            {
+                <a href="~/Staff/ProfileNhanVien" class="btn btn-light btn-sm me-2">
+                    Trang cá nhân
+                </a>
+            }
+            else if (role == "Admin")
+            {
+                <a href="javascript:history.back()" class="btn btn-warning btn-sm me-2">
+                    Quay lại
+                </a>
+            }
+
+            <a href="/Account/Logout" class="btn btn-danger btn-sm">
+                Đăng xuất
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="container mt-4">
+
+    <div class="card-box">
+
+        <h3 class="mb-4 text-primary">Danh sách đơn đặt tour</h3>
+
+        <table class="table table-bordered table-hover">
+
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Tài khoản</th>
+                    <th>Khách hàng</th>
+                    <th>Tour</th>
+                    <th>Số lượng</th>
+                    <th>Ngày khởi hành</th>
+                    <th>Trạng thái</th>
+                    <th>Xử lý</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+
+                        <td>@item.SoPhieuDatTour</td>
+
+                        <td>@item.Username</td>
+
+                        <td>@item.TenKH</td>
+
+                        <td>@item.TenTour</td>
+
+                        <td>@item.SoLuong</td>
+
+                        <td>@item.NgayKhoiHanh.ToString("dd/MM/yyyy")</td>
+
+                        <td>
+
+                            @if (item.TrangThai == "Chờ xác nhận")
+                            {
+                                <span class="badge bg-warning text-dark">
+                                    Chờ xác nhận
+                                </span>
+                            }
+                            else if (item.TrangThai == "Đã xác nhận")
+                            {
+
+                                <span class="badge bg-success">
+                                    Đã xác nhận
+                                </span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-danger">
+                                    Đã hủy
+                                </span>
+                            }
+
+                        </td>
+
+                        <td>
+
+                            @if (item.TrangThai == "Chờ xác nhận")
+                            {
+
+                                <form asp-controller="Admin" asp-action="XacNhanDon" method="post" style="display:inline">
+
+                                    <input type="hidden" name="id" value="@item.SoPhieuDatTour" />
+
+                                    <button class="btn btn-confirm btn-sm"
+                                            onclick="return confirm('Bạn có chắc muốn xác nhận đơn này?')">
+
+                                        Xác nhận
+
+                                    </button>
+
+                                </form>
+
+                                <form asp-controller="Admin" asp-action="TuChoiDon" method="post" style="display:inline">
+
+                                    <input type="hidden" name="id" value="@item.SoPhieuDatTour" />
+
+                                    <button class="btn btn-cancel btn-sm"
+                                            onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">
+
+                                        Hủy
+
+                                    </button>
+
+                                </form>
+
+                            }
+                            else
+                            {
+
+                                @if (item.TrangThai == "Đã xác nhận")
+                                {
+                                    <span class="text-success fw-bold">
+                                        ✔ Đã xác nhận bởi @(item.NguoiXuLy ?? "Chưa rõ")
+                                    </span>
+                                }
+                                else if (item.TrangThai == "Đã hủy")
+                                {
+                                    <span class="text-danger fw-bold">
+                                        ✖ Đã hủy bởi @(item.NguoiXuLy ?? "Chưa rõ")
+                                    </span>
+                                }
+                            }
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

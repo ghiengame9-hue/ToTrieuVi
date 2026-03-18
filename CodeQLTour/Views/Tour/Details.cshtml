@@ -1,0 +1,240 @@
+﻿@model CodeQLTour.Models.TourDuLich
+@{
+    ViewData["Title"] = "Chi tiết tour";
+
+    var today = DateTime.Today;
+
+    var dates = new List<DateTime>()
+    {
+        today.AddDays(3),
+        today.AddDays(7),
+        today.AddDays(14),
+        today.AddDays(21),
+        today.AddDays(30)
+    };
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+    body {
+        background: #f5f5f5;
+        font-family: Arial;
+    }
+
+    .tour-box {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .price {
+        color: #ff6a00;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .depart-box {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+    /* TABLE HEADER */
+
+    /* NAVBAR */
+
+    .navbar {
+        background: #0d3b66;
+        padding: 18px 0;
+    }
+
+        .navbar .nav-link {
+            color: white;
+            font-weight: 500;
+        }
+
+            .navbar .nav-link:hover {
+                color: #ffd166;
+            }
+
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+</style>
+
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container">
+
+        <a class="navbar-brand text-white">Tovy</a>
+
+        <div class="navbar-nav">
+            <a href="~/Tour/Index" class="nav-link">Trang chủ</a>
+            @if (Context.Session.GetString("User") == null)
+            {
+                <a class="nav-link"
+                   onclick="alert('Bạn cần đăng nhập để xem giỏ hàng!')"
+                   style="cursor:pointer">
+                    Giỏ hàng
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Cart"
+                   asp-action="Index"
+                   class="nav-link">
+                    Giỏ hàng
+                </a>
+            }
+
+        </div>
+
+
+
+        <div class="ms-auto">
+
+            @if (Context.Session.GetString("User") == null)
+            {
+                <a asp-controller="Account" asp-action="Auth" class="btn btn-outline-light me-2">
+                    Đăng nhập
+                </a>
+
+                <a asp-controller="Account" asp-action="Auth" class="btn btn-warning">
+                    Đăng ký
+                </a>
+            }
+            else
+            {
+                <span class="text-white me-3">
+                    Xin chào: <b>@Context.Session.GetString("User")</b>
+                </span>
+                <a asp-controller="KhachHang" asp-action="Profile" class="btn btn-light me-2">
+                    Trang cá nhân
+                </a>
+                <a asp-controller="Account"
+                   asp-action="Logout"
+                   class="btn btn-danger"
+                   onclick="return confirm('Bạn có chắc muốn đăng xuất không?')">
+                    Đăng xuất
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<div class="container mt-4">
+
+    <div class="row">
+
+        <div class="col-md-8">
+
+            <img src="/images/@Model.HinhAnh" class="img-fluid rounded mb-3">
+
+            <div class="tour-box">
+
+                <h2>@Model.TenTour</h2>
+
+                <p class="text-muted">
+                    Thời gian: @Model.ThoiGianDi
+                </p>
+
+                <hr>
+
+                <h5>Mô tả tour</h5>
+
+                <p>
+                    Khám phá hành trình du lịch tuyệt vời với nhiều điểm đến hấp dẫn,
+                    dịch vụ chất lượng cao và trải nghiệm đáng nhớ.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="tour-box">
+
+                <div class="price">
+                    @(Model.GiaVe?.ToString("N0")) đ
+                </div>
+
+                <p class="text-muted">
+                    Đã bao gồm thuế & phí
+                </p>
+
+                <hr>
+
+                <form asp-controller="Cart" asp-action="Add" method="post">
+
+                    <input type="hidden" name="id" value="@Model.MaTour" />
+
+                    <h6>Ngày khởi hành</h6>
+
+                    @foreach (var d in dates)
+                    {
+                        <div class="form-check depart-box">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="ngayKhoiHanh"
+                                   value="@d.ToString("yyyy-MM-dd")"
+                                   required>
+
+                            <label class="form-check-label">
+                                @d.ToString("dd/MM/yyyy")
+                            </label>
+
+                        </div>
+                    }
+
+                    <hr>
+                    @if (Context.Session.GetString("VaiTro") == "KhachHang")
+                    {
+                        <button class="btn btn-warning w-100 mb-2">
+                            Thêm vào giỏ hàng
+                        </button>
+
+                        <a asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@Model.MaTour"
+                               asp-route-ngayKhoiHanh="@DateTime.Today.AddDays(3)"
+                               class="btn btn-danger w-100">
+                            Mua ngay
+                        </a>
+                    }
+                    else if (Context.Session.GetString("User") == null)
+                    {
+                        <button type="button"
+                                class="btn btn-warning w-100 mb-2"
+                                onclick="alert('Bạn cần đăng nhập trước')">
+                            Thêm vào giỏ hàng
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-danger w-100"
+                                onclick="alert('Bạn cần đăng nhập trước')">
+                            Mua ngay
+                        </button>
+                    }
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,266 @@
+﻿<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+    body {
+        background: #f4f6f9;
+    }
+
+    .dashboard-title {
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+
+    .admin-card {
+        border: none;
+        border-radius: 12px;
+        color: white;
+        transition: 0.25s;
+    }
+
+        .admin-card:hover {
+            transform: translateY(-6px);
+        }
+
+    .admin-icon {
+        font-size: 32px;
+        opacity: 0.8;
+    }
+
+    .admin-number {
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .btn-admin {
+        width: 100%;
+        font-weight: 600;
+    }
+
+    .bg-tour {
+        background: linear-gradient(45deg,#1d7df2,#4fa3ff);
+    }
+
+    .bg-khach {
+        background: linear-gradient(45deg,#28a745,#6edc8c);
+    }
+
+    .bg-nhanvien {
+        background: linear-gradient(45deg,#f6b100,#ffd65c);
+    }
+
+    .bg-dattour {
+        background: linear-gradient(45deg,#dc3545,#ff6b6b);
+    }
+
+    .bg-doanhthu {
+        background: linear-gradient(45deg,#6f42c1,#9b6bff);
+    }
+
+    .custom-navbar {
+        background: #184a78;
+    }
+
+</style>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+
+    <div class="container">
+
+        <a class="navbar-brand text-white fw-bold">Tovy Admin</a>
+
+        <div class="navbar-nav">
+
+            <a href="/Admin" class="nav-link text-warning">Dashboard</a>
+
+            <a href="/Tour/Index" class="nav-link text-warning">
+                Trang bán hàng
+            </a>
+
+        </div>
+
+        <div class="ms-auto">
+
+            <span class="text-white me-3">
+                Admin: <b>@Context.Session.GetString("Username")</b>
+            </span>
+
+            <a href="/Account/Logout" class="btn btn-danger btn-sm">
+                Đăng xuất
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<div class="container mt-5">
+
+    <h3 class="dashboard-title">
+        Dashboard quản lý hệ thống
+    </h3>
+
+    <div class="row g-4">
+
+        <!-- TOUR -->
+
+        <div class="col-md-3">
+
+            <div class="card admin-card bg-tour">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <div class="admin-number">@ViewBag.Tours</div>
+                            <div>Tổng Tour</div>
+                        </div>
+
+                        <i class="fa-solid fa-map-location-dot admin-icon"></i>
+
+                    </div>
+
+                    <a href="/Admin/Tours" class="btn btn-light btn-admin">
+                        Quản lý Tour
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- KHÁCH -->
+
+        <div class="col-md-3">
+
+            <div class="card admin-card bg-khach">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <div class="admin-number">@ViewBag.Khach</div>
+                            <div>Khách hàng</div>
+                        </div>
+
+                        <i class="fa-solid fa-users admin-icon"></i>
+
+                    </div>
+
+                    <a href="/Admin/KhachHang" class="btn btn-light btn-admin">
+                        Quản lý Khách
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NHÂN VIÊN -->
+
+        <div class="col-md-3">
+
+            <div class="card admin-card bg-nhanvien">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <div class="admin-number">@ViewBag.NhanVien</div>
+                            <div>Nhân viên</div>
+                        </div>
+
+                        <i class="fa-solid fa-user-tie admin-icon"></i>
+
+                    </div>
+
+                    <a href="/Admin/NhanVien" class="btn btn-light btn-admin">
+                        Quản lý Nhân viên
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ĐẶT TOUR -->
+
+        <div class="col-md-3">
+
+            <div class="card admin-card bg-dattour">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <div class="admin-number">@ViewBag.DatTour</div>
+                            <div>Đơn đặt tour</div>
+                        </div>
+
+                        <i class="fa-solid fa-receipt admin-icon"></i>
+
+                    </div>
+
+                    <a href="/Admin/DatTour" class="btn btn-light btn-admin">
+                        Xem đơn
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DOANH THU -->
+
+        <div class="col-md-3">
+
+            <div class="card admin-card bg-doanhthu">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <div>
+                            <div class="admin-number">💰</div>
+                            <div>Doanh thu</div>
+                        </div>
+
+                        <i class="fa-solid fa-chart-line admin-icon"></i>
+
+                    </div>
+
+                    <a href="/Admin/DoanhThu" class="btn btn-light btn-admin">
+                        Xem doanh thu
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

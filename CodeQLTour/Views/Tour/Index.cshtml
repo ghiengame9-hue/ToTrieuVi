@@ -1,0 +1,688 @@
+﻿@model IEnumerable<CodeQLTour.Models.TourDuLich>
+@{
+    ViewData["Title"] = "Tour Du Lịch";
+}
+
+
+    <title>Trang chủ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+
+
+<style>
+
+    body {
+        background: #f5f5f5;
+        font-family: Arial;
+        padding-top: 70px;
+        font-size: 20px;
+    }
+
+    .navbar {
+        background: #0d3b66;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        transition: top 0.4s;
+        padding: 16px 0;
+    }
+
+        .navbar .nav-link {
+            color: white;
+            margin-right: 15px;
+        }
+
+    .banner {
+        height: 380px;
+        background: url('/images/banner.jpg') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-box {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 420px;
+    }
+
+    .section {
+        padding: 50px 0;
+    }
+
+    .tour-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: 0.3s;
+        position: relative;
+    }
+
+        .tour-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tour-card img {
+            height: 180px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+    .price {
+        color: #ff6a00;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    /* nút + giỏ hàng */
+    .cart-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff6a00;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
+    /* nút mua hàng */
+    .buy-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+</style>
+<nav class="navbar navbar-expand-lg">
+
+    <div class="container">
+
+        <a class="navbar-brand text-white">Tovy</a>
+
+        <div class="navbar-nav">
+
+            <a href="~/Tour/Index" class="nav-link">Trang chủ</a>
+
+            @* ===== ADMIN ===== *@
+            @if (Context.Session.GetString("VaiTro") == "Admin")
+            {
+                <a href="/Admin" class="nav-link text-warning">
+                    ⚙ Quay lại Admin
+                </a>
+
+                <a href="/Admin/Tours" class="nav-link text-warning">
+                    📦 Quản lý Tour
+                </a>
+            }
+
+            @* ===== USER ===== *@
+            else if (Context.Session.GetString("User") != null)
+            {
+                <a asp-controller="Cart"
+                       asp-action="Index"
+                       class="nav-link">
+                    Giỏ hàng
+                </a>
+
+                <a asp-controller="Cart"
+                       asp-action="LichSu"
+                       class="nav-link">
+                    📜 Lịch sử mua
+                </a>
+            }
+            else
+            {
+                <a class="nav-link"
+                       onclick="alert('Bạn cần đăng nhập để xem giỏ hàng!')"
+                       style="cursor:pointer">
+                    Giỏ hàng
+                </a>
+            }
+
+        </div>
+
+        <div class="ms-auto">
+
+            @* ===== CHƯA ĐĂNG NHẬP ===== *@
+            @if (Context.Session.GetString("User") == null)
+            {
+                <a asp-controller="Account"
+                       asp-action="Auth"
+                       class="btn btn-outline-light me-2">
+                    Đăng nhập
+                </a>
+
+                <a asp-controller="Account"
+                       asp-action="Auth"
+                       class="btn btn-warning">
+                    Đăng ký
+                </a>
+            }
+
+            @* ===== ADMIN ===== *@
+            else if (Context.Session.GetString("VaiTro") == "Admin")
+            {
+                <span class="text-white me-3">
+                    Admin: <b>@Context.Session.GetString("User")</b>
+                </span>
+
+                <a asp-controller="Account"
+                       asp-action="Logout"
+                       class="btn btn-danger"
+                       onclick="return confirm('Bạn có chắc muốn đăng xuất không?')">
+                    Đăng xuất
+                </a>
+            }
+
+            @* ===== USER ===== *@
+            else
+            {
+                <span class="text-white me-3">
+                    Xin chào: <b>@Context.Session.GetString("User")</b>
+                </span>
+
+                <a asp-controller="KhachHang"
+                       asp-action="Profile"
+                       class="btn btn-light me-2">
+                    Trang cá nhân
+                </a>
+
+                <a asp-controller="Account"
+                       asp-action="Logout"
+                       class="btn btn-danger"
+                       onclick="return confirm('Bạn có chắc muốn đăng xuất không?')">
+                    Đăng xuất
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+</nav>
+
+<div class="banner">
+
+    <div class="container">
+
+        <div class="search-box">
+
+            <h5>Hơn 99+ Tour Khám Phá Ngay</h5>
+     
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TOUR ƯU ĐÃI -->
+
+<div class="section" style="background:#e8d7b9">
+
+    <div class="container">
+
+        <h4 class="mb-4">Tour Ưu Đãi Tốt Nhất Hôm Nay</h4>
+
+        <div class="row">
+
+            @foreach (var item in ViewBag.UuDai)
+            {
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="tour-card">
+
+                        @if (Context.Session.GetString("VaiTro") == "KhachHang")
+                        {
+                            <a asp-controller="Cart"
+                                   asp-action="Add"
+                                   asp-route-id="@item.MaTour"
+                                   class="cart-btn">
+                                +
+                            </a>
+                        }
+                        else if (Context.Session.GetString("User") == null)
+                        {
+                            <button class="cart-btn"
+                                    onclick="alert('Bạn cần đăng nhập trước khi thêm vào giỏ hàng!')">
+                                +
+                            </button>
+                        }
+
+
+
+                        <img src="@Url.Content("~/images/" + item.HinhAnh)" class="img-fluid">
+                        <div class="p-3">
+
+                            <h6>@item.TenTour</h6>
+
+                            <p class="text-muted">
+                                Thời gian: @item.ThoiGianDi
+                            </p>
+
+                            <div class="price">
+                                @item.GiaVe.ToString("N0") đ
+                            </div>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.MaTour"
+                               class="btn btn-primary btn-sm mt-2">
+                                Chi tiết
+                            </a>
+
+                            @if (Context.Session.GetString("VaiTro") == "KhachHang")
+                            {
+                                <a asp-controller="Cart"
+                                       asp-action="Add"
+                                       asp-route-id="@item.MaTour"
+                                       class="btn btn-warning buy-btn">
+                                    Mua hàng
+                                </a>
+                            }
+                            else if (Context.Session.GetString("User") == null)
+                            {
+                                <button class="btn btn-warning buy-btn"
+                                        onclick="alert('Bạn cần đăng nhập trước khi mua tour!')">
+                                    Mua hàng
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- NHẬT BẢN HÀN QUỐC -->
+
+<div class="section">
+
+    <div class="container">
+
+        <h4 class="mb-4">
+            Tour Du Lịch Nhật Bản - Hàn Quốc
+        </h4>
+
+        <div class="row">
+
+            @foreach (var item in ViewBag.NhatHan)
+            {
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="tour-card">
+
+                        @if (Context.Session.GetString("User") == null)
+                        {
+                            <button class="cart-btn"
+                                    onclick="alert('Bạn cần đăng nhập trước khi thêm vào giỏ hàng!')">
+                                +
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@item.MaTour"
+                               class="cart-btn">
+                                +
+                            </a>
+                        }
+
+                        <img src="@Url.Content("~/images/" + item.HinhAnh)" class="img-fluid">
+
+                        <div class="p-3">
+
+                            <h6>@item.TenTour</h6>
+
+                            <p class="text-muted">
+                                Thời gian: @item.ThoiGianDi
+                            </p>
+
+                            <div class="price">
+                                @item.GiaVe.ToString("N0") đ
+                            </div>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.MaTour"
+                               class="btn btn-primary btn-sm mt-2">
+                                Chi tiết
+                            </a>
+
+                         
+                            @if (Context.Session.GetString("User") == null)
+                            {
+                                <button class="btn btn-warning buy-btn"
+                                        onclick="alert('Bạn cần đăng nhập trước khi mua tour!')">
+                                    Mua hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Cart"
+                                       asp-action="Add"
+                                       asp-route-id="@item.MaTour"
+                                       class="btn btn-warning buy-btn">
+                                    Mua hàng
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TRUNG QUỐC -->
+
+<div class="section" style="background:#f7f7f7">
+
+    <div class="container">
+
+        <h4 class="mb-4">
+            Tour Du Lịch Trung Quốc - Hồng Kông - Đài Loan
+        </h4>
+
+        <div class="row">
+
+            @foreach (var item in ViewBag.TrungHongDai)
+            {
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="tour-card">
+
+                        @if (Context.Session.GetString("User") == null)
+                        {
+                            <button class="cart-btn"
+                                    onclick="alert('Bạn cần đăng nhập trước khi thêm vào giỏ hàng!')">
+                                +
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@item.MaTour"
+                               class="cart-btn">
+                                +
+                            </a>
+                        }
+
+                        <img src="@Url.Content("~/images/" + item.HinhAnh)" class="img-fluid">
+
+                        <div class="p-3">
+
+                            <h6>@item.TenTour</h6>
+
+                            <p class="text-muted">
+                                Thời gian: @item.ThoiGianDi
+                            </p>
+
+                            <div class="price">
+                                @item.GiaVe.ToString("N0") đ
+                            </div>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.MaTour"
+                               class="btn btn-primary btn-sm mt-2">
+                                Chi tiết
+                            </a>
+
+                           
+                            @if (Context.Session.GetString("User") == null)
+                            {
+                                <button class="btn btn-warning buy-btn"
+                                        onclick="alert('Bạn cần đăng nhập trước khi mua tour!')">
+                                    Mua hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Cart"
+                                       asp-action="Add"
+                                       asp-route-id="@item.MaTour"
+                                       class="btn btn-warning buy-btn">
+                                    Mua hàng
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SINGAPORE -->
+
+<div class="section">
+
+    <div class="container">
+
+        <h4 class="mb-4">
+            Tour Du Lịch Singapore - Malaysia - Indonesia
+        </h4>
+
+        <div class="row">
+
+            @foreach (var item in ViewBag.SingMalayIndo)
+            {
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="tour-card">
+
+                        @if (Context.Session.GetString("User") == null)
+                        {
+                            <button class="cart-btn"
+                                    onclick="alert('Bạn cần đăng nhập trước khi thêm vào giỏ hàng!')">
+                                +
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@item.MaTour"
+                               class="cart-btn">
+                                +
+                            </a>
+                        }
+                        <img src="@Url.Content("~/images/" + item.HinhAnh)" class="img-fluid">
+
+                        <div class="p-3">
+
+                            <h6>@item.TenTour</h6>
+
+                            <p class="text-muted">
+                                Thời gian: @item.ThoiGianDi
+                            </p>
+
+                            <div class="price">
+                                @item.GiaVe.ToString("N0") đ
+                            </div>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.MaTour"
+                               class="btn btn-primary btn-sm mt-2">
+                                Chi tiết
+                            </a>
+
+                          
+                            @if (Context.Session.GetString("User") == null)
+                            {
+                                <button class="btn btn-warning buy-btn"
+                                        onclick="alert('Bạn cần đăng nhập trước khi mua tour!')">
+                                    Mua hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Cart"
+                                       asp-action="Add"
+                                       asp-route-id="@item.MaTour"
+                                       class="btn btn-warning buy-btn">
+                                    Mua hàng
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ĐIỂM DU LỊCH -->
+
+<div class="section" style="background:#f7f7f7">
+
+    <div class="container">
+
+        <h4 class="mb-4">
+            Các điểm du lịch phổ biến
+        </h4>
+
+        <div class="row">
+
+            @foreach (var item in ViewBag.PhoBien)
+            {
+
+                <div class="col-md-4 mb-4">
+
+                    <div class="tour-card">
+
+                        @if (Context.Session.GetString("User") == null)
+                        {
+                            <button class="cart-btn"
+                                    onclick="alert('Bạn cần đăng nhập trước khi thêm vào giỏ hàng!')">
+                                +
+                            </button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Cart"
+                               asp-action="Add"
+                               asp-route-id="@item.MaTour"
+                               class="cart-btn">
+                                +
+                            </a>
+                        }
+
+                                        <img src="@Url.Content("~/images/" + item.HinhAnh)" class="img-fluid">
+
+                        <div class="p-3">
+
+                            <h6>@item.TenTour</h6>
+
+                            <p class="text-muted">
+                                Thời gian: @item.ThoiGianDi
+                            </p>
+
+                            <div class="price">
+                                @item.GiaVe.ToString("N0") đ
+                            </div>
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.MaTour"
+                               class="btn btn-primary btn-sm mt-2">
+                                Chi tiết
+                            </a>
+
+                          
+                            @if (Context.Session.GetString("User") == null)
+                            {
+                                <button class="btn btn-warning buy-btn"
+                                        onclick="alert('Bạn cần đăng nhập trước khi mua tour!')">
+                                    Mua hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Cart"
+                                       asp-action="Add"
+                                       asp-route-id="@item.MaTour"
+                                       class="btn btn-warning buy-btn">
+                                    Mua hàng
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    let lastScrollTop = 0;
+    const navbar = document.querySelector(".navbar");
+
+    window.addEventListener("scroll", function(){
+
+    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if(scrollTop > lastScrollTop){
+
+        // kéo xuống → ẩn
+        navbar.style.top = "-80px";
+
+    }else{
+
+        // kéo lên → hiện
+        navbar.style.top = "0";
+
+    }
+
+    lastScrollTop = scrollTop;
+
+    });
+
+</script>

@@ -1,0 +1,205 @@
+﻿@model CodeQLTour.Models.TourDuLich
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+
+    body {
+        background: linear-gradient(135deg,#eef2f7,#dbe6f6);
+        font-family: 'Segoe UI';
+    }
+
+    .card-admin {
+        background: white;
+        border-radius: 15px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .title {
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 25px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+    }
+
+    .preview-box {
+        border: 2px dashed #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        background: #fafafa;
+    }
+
+    .preview-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .btn {
+        border-radius: 10px;
+    }
+
+</style>
+
+
+<div class="container mt-5">
+
+    <div class="card-admin">
+
+        <div class="title">
+            <i class="fa-solid fa-pen-to-square text-primary"></i>
+            @(Model == null || Model.MaTour == 0 ? "Thêm Tour" : "Sửa Tour")
+        </div>
+
+        <form asp-action="@(Model?.MaTour == 0 ? "CreateTour" : "EditTour")"
+              asp-controller="Admin"
+              method="post">
+
+            <input type="hidden" asp-for="MaTour" />
+
+            <div class="row">
+
+                <!-- LEFT -->
+                <div class="col-md-8">
+
+                    <div class="mb-3">
+                        <label class="fw-semibold">Tên Tour</label>
+                        <input asp-for="TenTour" class="form-control" placeholder="Nhập tên tour">
+                            <span asp-validation-for="TenTour" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-semibold">Giá Vé</label>
+                                <input asp-for="GiaVe" type="number" class="form-control" placeholder="VD: 5000000">
+                                    <span asp-validation-for="GiaVe" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="fw-semibold">Thời Gian</label>
+                                    <input asp-for="ThoiGianDi" class="form-control" placeholder="VD: 5 ngày 4 đêm">
+                                        <span asp-validation-for="ThoiGianDi" class="text-danger small"></span>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-6 mb-3">
+                                        <label class="fw-semibold">Tình Trạng</label>
+                                        <select asp-for="TinhTrang" class="form-select">
+                                            <option value="Còn chỗ">Còn chỗ</option>
+                                            <option value="Hết chỗ">Hết chỗ</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label class="fw-semibold">Loại Tour</label>
+
+                                        <select asp-for="ViTri" class="form-select">
+
+                                            <option value="UuDai">Tour Ưu Đãi</option>
+
+                                            <option value="NhatHan">
+                                                Nhật Bản - Hàn Quốc
+                                            </option>
+
+                                            <option value="TrungHongDai">
+                                                Trung Quốc - Hồng Kông - Đài Loan
+                                            </option>
+
+                                            <option value="SingMalayIndo">
+                                                Singapore - Malaysia - Indonesia
+                                            </option>
+
+                                            <option value="PhoBien">
+                                                Du lịch phổ biến
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="fw-semibold">Tên File Ảnh</label>
+                                    <input asp-for="HinhAnh"
+                                           class="form-control"
+                                           placeholder="vd: tokyo.jpg"
+                                           id="imgInput">
+
+                                        <small class="text-muted">
+                                            Ảnh nằm trong thư mục <b>/wwwroot/images</b>
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <!-- RIGHT -->
+
+                                <div class="col-md-4">
+
+                                    <div class="preview-box text-center">
+
+                                        <p class="fw-semibold">
+                                            <i class="fa-solid fa-image"></i>
+                                            Xem trước ảnh
+                                        </p>
+
+                                        <img id="preview"
+                                             src="/images/@(Model?.HinhAnh ?? "noimage.jpg")"
+                                             class="preview-img" />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="mt-4">
+
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Lưu Tour
+                                </button>
+
+                                <a href="/Admin/Tours" class="btn btn-secondary px-4">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    Quay lại
+                                </a>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+
+                <script>
+
+                    document.getElementById("imgInput").addEventListener("keyup",function(){
+
+                    var name=this.value;
+
+                    if(name!="")
+                    document.getElementById("preview").src="/images/"+name;
+
+                    });
+
+                </script>
+
+                @section Scripts {
+                    <partial name="_ValidationScriptsPartial" />
+                }
